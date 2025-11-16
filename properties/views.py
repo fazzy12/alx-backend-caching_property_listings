@@ -1,16 +1,14 @@
-from django.shortcuts import render
 from django.views.decorators.cache import cache_page
+from django.http import JsonResponse
 from .models import Property
 
 @cache_page(60 * 15)
 def property_list(request):
     """
-    Renders a list of all properties, with the entire view response cached for 15 minutes.
+    Retrieves all properties and returns them as JSON, with the response cached in Redis.
     """
-    properties = Property.objects.all()
+    properties = Property.objects.all().values('title', 'description', 'price', 'location')
     
-    context = {
-        'properties': properties
-    }
+    data = list(properties)
     
-    return render(request, 'properties/property_list.html', context)
+    return JsonResponse({'data': data}, safe=False)
