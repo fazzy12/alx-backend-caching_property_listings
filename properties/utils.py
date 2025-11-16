@@ -38,7 +38,7 @@ def get_redis_cache_metrics():
 
         total_lookups = keyspace_hits + keyspace_misses
         
-        hit_ratio = keyspace_hits / total_lookups if total_lookups > 0 else 0
+        hit_ratio = keyspace_hits / total_lookups if total_requests > 0 else 0
 
         metrics = {
             'keyspace_hits': keyspace_hits,
