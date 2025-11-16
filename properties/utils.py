@@ -31,19 +31,14 @@ def get_redis_cache_metrics():
     """
     try:
         redis_connection = get_redis_connection("default")
-        
         info = redis_connection.info('Keyspace')
-        
         
         keyspace_hits = info.get('keyspace_hits', 0)
         keyspace_misses = info.get('keyspace_misses', 0)
 
         total_lookups = keyspace_hits + keyspace_misses
         
-        if total_lookups > 0:
-            hit_ratio = keyspace_hits / total_lookups
-        else:
-            hit_ratio = 0.0
+        hit_ratio = keyspace_hits / total_lookups if total_lookups > 0 else 0.0
 
         metrics = {
             'keyspace_hits': keyspace_hits,
@@ -52,6 +47,7 @@ def get_redis_cache_metrics():
             'hit_ratio': hit_ratio,
         }
 
+        # Log the metrics
         logger.info(f"Redis Cache Metrics: Hits={keyspace_hits}, Misses={keyspace_misses}, Ratio={hit_ratio:.4f}")
         
         return metrics
